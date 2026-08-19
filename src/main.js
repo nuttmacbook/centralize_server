@@ -1,13 +1,23 @@
 import fastify from "fastify";
+import Web3 from "web3";
 
-import serverRoutes from "./rpc/routes/server.js";
+import { DB } from "./database/lmdb.js";
 
-const app = new fastify({ logger: false });
+import memopoolRoutes from "./rpc/routes/memopool.js";
+import metadataRoutes from "./rpc/routes/metadata.js";
 
-const port = process.env.PORT || 3000
-const host = '0.0.0.0'
+export const app = new fastify({ logger: false });
+export const web3 = new Web3();
 
-app.register(serverRoutes, { prefix: '/' });
+export const port = process.env.PORT || 3000
+export const host = '0.0.0.0'
+
+export const cardianal = new DB("cardianal");
+
+app.decorate('cardianal', cardianal);
+
+app.register(metadataRoutes, { prefix: '/metadata' });
+app.register(memopoolRoutes, { prefix: '/memopool' });
 
 const start = async () => {
   try {
@@ -18,4 +28,5 @@ const start = async () => {
     process.exit(1)
   }
 }
-start()
+
+start();
