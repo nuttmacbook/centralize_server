@@ -1,8 +1,11 @@
 import { open } from "lmdb";
+
 import path from "path";
+import crypto from "crypto";
 
 export class DB {
   constructor(dbPath, compression = true, mapSize = 1024 * 1024 * 1024) {
+    this.basekey = crypto.createHash("sha256").update(`primarydbkey|${dbPath}`).digest("hex");
     this.queue = [];
     this.server = open({ path: path.resolve("./" + dbPath), compression, mapSize });
   }

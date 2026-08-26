@@ -1,5 +1,8 @@
 import fastify from "fastify";
 import Web3 from "web3";
+import { configDotenv } from "dotenv";
+
+configDotenv({ quiet: true });
 
 import { DB } from "./database/lmdb.js";
 
@@ -12,13 +15,13 @@ export const web3 = new Web3();
 export const port = process.env.PORT || 3000
 export const host = '0.0.0.0'
 
-export const version = "devnet_syncblock";
-export const cardianal = new DB(version);
+export const dbpath = process.env.SYNCNETWORK_DB;
+export const cardianal = new DB(dbpath);
 
 app.decorate('cardianal', cardianal);
 
 app.get('/', async (request, reply) => {
-    return { version, status: true };
+    return { basekey: cardianal.basekey, status: true };
 });
 
 app.register(metadataRoutes, { prefix: '/api/v1' });
