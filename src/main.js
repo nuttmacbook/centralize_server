@@ -12,11 +12,16 @@ export const web3 = new Web3();
 export const port = process.env.PORT || 3000
 export const host = '0.0.0.0'
 
-export const cardianal = new DB("cardianal");
+export const version = "devnet_syncblock";
+export const cardianal = new DB(version);
 
 app.decorate('cardianal', cardianal);
 
-app.register(metadataRoutes, { prefix: '/metadata' });
+app.get('/', async (request, reply) => {
+    return { version, status: true };
+});
+
+app.register(metadataRoutes, { prefix: '/api/v1' });
 app.register(memopoolRoutes, { prefix: '/memopool' });
 
 const start = async () => {
@@ -30,5 +35,3 @@ const start = async () => {
 }
 
 start();
-
-// updated <prom pc2>
