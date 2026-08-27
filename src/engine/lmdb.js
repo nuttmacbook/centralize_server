@@ -12,15 +12,18 @@ export class DB {
 
   write(key, value) { this.queue.push({ key, value }); }
 
-  commit() {
+  commit({ throwOnError = false } = {}) {
     if (!this.queue.length) return;
-    const batch = [...this.queue]; this.queue = [];
+    const batch = [...this.queue];
+    this.queue = [];
+
     try {
-      this.server.transactionSync(() => batch.forEach(({ key, value }) => this.server.put(key, value)));
-      console.log(`✅ เขียนข้อมูล ${batch.length} records ลงฐานเรียบร้อย`);
+      this.server.transactionSync(() => {
+        batch.forEach(({ key, value }) => this.server.put(key, value));
+      });
     } catch (err) {
-      console.error("❌ Transaction ล้มเหลว:", err);
       this.queue.unshift(...batch);
+      if (throwOnError) { throw err; }
     }
   }
 

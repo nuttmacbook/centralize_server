@@ -1,10 +1,13 @@
-import { isAllowAPIKey } from "../safeguard/apiKey.js";
+// api version: 1
 
-let memoTransactions = [];
+import { isAllowAPIKey } from "../safeguard/guard_key.js";
 
-export default async function memopoolRoutes(app, options) {
+let pendingTx = [];
+
+export default async function router_memo(app, options) {
+
     app.get('/pending', async (request, reply) => {
-        return memoTransactions;
+        return pendingTx;
     });
 
     app.post('/push', async (request, reply) => {
@@ -12,12 +15,12 @@ export default async function memopoolRoutes(app, options) {
             const apiKey = request.headers['x-api-key'];
             await isAllowAPIKey(apiKey);
 
-            const { nonce, from, to, data } = request.body;
+            const { from, to, data } = request.body;
 
-            const indexed = memoTransactions.length;
+            const indexed = pendingTx.length;
             const tx = { indexed, from, to, data }
 
-            memoTransactions.push(tx);
+            pendingTx.push(tx);
 
             return { success: true, tx };
         } catch (error) {
