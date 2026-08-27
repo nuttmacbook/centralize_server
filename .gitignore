@@ -4,4 +4,4 @@ node_modules/
 .env.*.local
 
 cardianal/
-devnet_syncblock_db/
+devnet_syncblock/

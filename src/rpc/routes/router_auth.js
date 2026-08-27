@@ -90,7 +90,7 @@ export default async function router_auth(app, options) {
                 domain: dbpath,
                 address,
                 statement: "Sign in with Ethereum to access the app.",
-                uri: `${req.protocol}://${req.hostname}${req.originalUrl}`,
+                uri: `${req.protocol}://${req.hostname}/api/v1/auth`,
                 version: "1",
                 chainId: 1,
                 issuedAt: new Date().toISOString()
@@ -98,15 +98,18 @@ export default async function router_auth(app, options) {
 
             const EIP4361 = siweMessage.prepareMessage();
             const siwePrivate = crypto.randomUUID();
+            const device = req.headers['user-agent'] ?? null
+
+            const QRCodeLogin = await generateQRCode(siweMessage);
 
             const signature = "";
-            siwePublic = { siweMessage, EIP4361, signature }
+            siwePublic = { siweMessage, EIP4361, signature, device }
 
             app.cardianal.write(siwePath, siwePublic);
             app.cardianal.write(siwePath + ":private", siwePrivate);
             app.cardianal.commit({ throwOnError: true });
 
-            return { siwePublic, siwePrivate }
+            return { siwePublic, siwePrivate, QRCodeLogin }
         }
     })
 
