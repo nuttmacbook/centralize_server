@@ -47,7 +47,7 @@ await app.register(router_auth, { prefix: 'api/v1/auth' });
 const start = async () => {
   try {
     await app.listen({ port, host })
-    console.log(`🚀 WebSocket API running on port ${port}`);
+    console.log(`🚀 Server API running on port ${port}`);
   } catch (err) {
     app.log.error(err)
     process.exit(1)
