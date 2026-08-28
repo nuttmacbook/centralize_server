@@ -109,6 +109,13 @@ export default async function router_auth(app, options) {
             app.cardianal.write(siwePath + ":private", siwePrivate);
             app.cardianal.commit({ throwOnError: true });
 
+            //test reovery
+            const response = siweMessage.toStr;
+            const parsed = JSON.parse(response)
+            const rEIP4361 = parsed.prepareMessage();
+
+            console.log({ response, parsed, rEIP4361 });
+
             return { siwePublic, siwePrivate, QRCodeLogin }
         }
     })
