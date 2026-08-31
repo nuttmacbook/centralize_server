@@ -90,7 +90,7 @@ export default async function router_auth(app, options) {
                 domain: dbpath,
                 address,
                 statement: "Sign in with Ethereum to access the app.",
-                uri: `${req.protocol}://${req.hostname}/api/v1/auth`,
+                uri: `https://syncblock.network/api/v1/auth`,
                 version: "1",
                 chainId: 1,
                 issuedAt: new Date().toISOString()
@@ -100,8 +100,6 @@ export default async function router_auth(app, options) {
             const siwePrivate = crypto.randomUUID();
             const device = req.headers['user-agent'] ?? null
 
-            const QRCodeLogin = await generateQRCode(siweMessage);
-
             const signature = "";
             siwePublic = { siweMessage, EIP4361, signature, device }
 
@@ -109,14 +107,9 @@ export default async function router_auth(app, options) {
             app.cardianal.write(siwePath + ":private", siwePrivate);
             app.cardianal.commit({ throwOnError: true });
 
-            //test reovery
-            const response = siweMessage.toStr;
-            const parsed = JSON.parse(response)
-            const rEIP4361 = parsed.prepareMessage();
+             const QRCode = await generateQRCode(siwePublic);
 
-            console.log({ response, parsed, rEIP4361 });
-
-            return { siwePublic, siwePrivate, QRCodeLogin }
+            return { siwePublic, siwePrivate, QRCode }
         }
     })
 

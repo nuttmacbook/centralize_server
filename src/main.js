@@ -2,6 +2,7 @@
 import fastify from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
+import fastifyCors from "@fastify/cors";
 
 import Web3 from "web3";
 import { configDotenv } from "dotenv";
@@ -26,8 +27,14 @@ export const host = '0.0.0.0'
 export const dbpath = process.env.SYNCNETWORK_DB;
 export const cardianal = new DB(dbpath);
 
-// initialization
 app.decorate('cardianal', cardianal);
+
+await app.register(fastifyCors, {
+  origin: true,
+  methods: ["GET", "POST"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+});
 
 // engine router
 await app.register(fastifyCookie, { secret: process.env.COOKIE_SECRET })
