@@ -81,6 +81,8 @@ const readCookie = (req) => {
 export default async function router_auth(app, options) {
     app.post('/request', async (req, reply) => {
         const { address } = req.body ?? {}
+        const origin = req.headers;
+        console.log(origin)
         const siwePath = `${address}:siwe`;
         let siwePublic = app.cardianal.read(siwePath) ?? null;
         if (siwePublic && new Date(siwePublic.siweMessage.issuedAt).getTime() > Date.now() - 10 * 1000) {
